@@ -43,3 +43,17 @@ export type ASTIssue = {
   detector: (files: InputType) => Instance[]; // Function analyzing the AST and returning instances of the issue
   regexOrAST: 'AST';
 };
+
+// Type to bundle Issues and Instances for splitting Analysis and Printing steps
+export type Analysis = {
+  issue: Issue;
+  instances: Instance[];
+};
+
+export type AnalysisResults = {
+  GAS?: Analysis[];
+  NC?: Analysis[];
+  L?: Analysis[];
+  M?: Analysis[];
+  H?: Analysis[];
+}
