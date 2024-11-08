@@ -82,11 +82,7 @@ const main = async (
   }
   
   // Do markdown conversion
-
   let markdownResult = markdown(analysisResultsObj);
-
-  console.log(markdownResult)
-
 
   fs.writeFileSync(out, markdownResult);
 };
