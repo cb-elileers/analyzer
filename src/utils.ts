@@ -54,7 +54,9 @@ export const recursiveExploration = (basePath: string, extension = '.sol'): stri
     for (let fileName of tempFileNames) {
       fileName = `${dir}${fileName}`;
       if (fs.statSync(`${basePath}${fileName}`).isDirectory()) {
-        directoryQueue.push(fileName + '/');
+        if (fileName != "test" && fileName != "lib" && fileName != "script"){ // skip test and lib folders
+          directoryQueue.push(fileName + '/');
+        } 
       } else if (fileName.endsWith(extension)) {
         fileNames.push(fileName);
       }
