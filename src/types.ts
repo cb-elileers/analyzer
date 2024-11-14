@@ -8,6 +8,10 @@ export enum IssueTypes {
   H = 'H',
 }
 
+export enum ReportTypes {
+  markdown = 'markdown'
+}
+
 // List of solidity files with content and name
 export type InputType = { content: string; name: string; ast: SourceUnit }[];
 

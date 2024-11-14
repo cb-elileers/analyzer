@@ -1,9 +1,10 @@
 import * as fs from 'fs';
 import analyze from './analyze';
+import sarif from './sarif';
 import compileAndBuildAST from './compile';
 import issues from './issues';
 import markdown from './markdown';
-import { InputType, IssueTypes, Analysis, AnalysisResults } from './types';
+import { InputType, IssueTypes, Analysis, AnalysisResults, ReportTypes } from './types';
 import { recursiveExploration } from './utils';
 
 /*   .---. ,--.  ,--  / ,---.   ,--.   ,--.'  ,-. .----. ,------.,------, 
@@ -28,8 +29,8 @@ const main = async (
   githubLink: string | null,
   out: string,
   scope?: string,
+  sarifOut?: string
 ) => {
-  // let result = '# Report\n\n';
   let fileNames: string[] = [];
 
   if (!!scopeFile || !!scope) {
@@ -80,11 +81,22 @@ const main = async (
     // add analyze results for this issue type to the results object
     analysisResultsObj[t] = analyses;
   }
-  
-  // Do markdown conversion
-  let markdownResult = markdown(analysisResultsObj);
 
+  // Do markdown conversion
+  let markdownResult = markdown(analysisResultsObj, fileNames);
   fs.writeFileSync(out, markdownResult);
+
+  if(sarifOut){
+    let sarifAnalyses: Analysis[] = [];
+  
+    for (const t of Object.values(IssueTypes)) {
+      sarifAnalyses = sarifAnalyses.concat((analysisResultsObj[t] ?? []));
+    }
+
+    let sarifResult = sarif(sarifAnalyses);
+
+    fs.writeFileSync(sarifOut, JSON.stringify(sarifResult, null, 2), 'utf-8');
+  }
 };
 
 export default main;
