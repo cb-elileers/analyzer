@@ -8,6 +8,10 @@ export enum IssueTypes {
   H = 'H',
 }
 
+export enum ReportTypes {
+  markdown = 'markdown'
+}
+
 // List of solidity files with content and name
 export type InputType = { content: string; name: string; ast: SourceUnit }[];
 
@@ -43,3 +47,17 @@ export type ASTIssue = {
   detector: (files: InputType) => Instance[]; // Function analyzing the AST and returning instances of the issue
   regexOrAST: 'AST';
 };
+
+// Type to bundle Issues and Instances for splitting Analysis and Printing steps
+export type Analysis = {
+  issue: Issue;
+  instances: Instance[];
+};
+
+export type AnalysisResults = {
+  GAS?: Analysis[];
+  NC?: Analysis[];
+  L?: Analysis[];
+  M?: Analysis[];
+  H?: Analysis[];
+}

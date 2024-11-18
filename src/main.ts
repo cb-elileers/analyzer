@@ -1,8 +1,10 @@
-import fs from 'fs';
+import * as fs from 'fs';
 import analyze from './analyze';
+import sarif from './sarif';
 import compileAndBuildAST from './compile';
 import issues from './issues';
-import { InputType, IssueTypes } from './types';
+import markdown from './markdown';
+import { InputType, IssueTypes, Analysis, AnalysisResults, ReportTypes } from './types';
 import { recursiveExploration } from './utils';
 
 /*   .---. ,--.  ,--  / ,---.   ,--.   ,--.'  ,-. .----. ,------.,------, 
@@ -27,8 +29,8 @@ const main = async (
   githubLink: string | null,
   out: string,
   scope?: string,
+  sarifOut?: string
 ) => {
-  let result = '# Report\n\n';
   let fileNames: string[] = [];
 
   if (!!scopeFile || !!scope) {
@@ -48,6 +50,7 @@ const main = async (
   console.log('Scope: ', fileNames);
 
   // Uncomment next lines to have the list of analyzed files in the report
+  // todo: parameterize this
 
   // result += '## Files analyzed\n\n';
   // fileNames.forEach(fileName => {
@@ -65,15 +68,35 @@ const main = async (
     });
   });
 
+  let analysisResultsObj: AnalysisResults = {};
+
+  // todo: parameterize which issue types to run
   for (const t of Object.values(IssueTypes)) {
-    result += analyze(
+    let analyses: Analysis[] = analyze(
       files,
       issues.filter(i => i.type === t),
       !!githubLink ? githubLink : undefined,
     );
+
+    // add analyze results for this issue type to the results object
+    analysisResultsObj[t] = analyses;
   }
 
-  fs.writeFileSync(out, result);
+  // Do markdown conversion
+  let markdownResult = markdown(analysisResultsObj, fileNames);
+  fs.writeFileSync(out, markdownResult);
+
+  if(sarifOut){
+    let sarifAnalyses: Analysis[] = [];
+  
+    for (const t of Object.values(IssueTypes)) {
+      sarifAnalyses = sarifAnalyses.concat((analysisResultsObj[t] ?? []));
+    }
+
+    let sarifResult = sarif(sarifAnalyses);
+
+    fs.writeFileSync(sarifOut, JSON.stringify(sarifResult, null, 2), 'utf-8');
+  }
 };
 
 export default main;
