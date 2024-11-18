@@ -9,28 +9,21 @@ import main from './main';
 
 // ================================= PARAMETERS ================================
 
-// process parameter flags
-const argv = key => {
-  // Return true if the key exists and a value is undefined
-  // if ( process.argv.includes( `--${ key }` ) ) return true;
+import { program } from 'commander';
 
-  const value = process.argv.find( element => element.startsWith( `--${ key }=` ) );
-
-  // Return undefined if the key does not exist and a value is undefined
-  if ( !value ) return undefined;
-  
-  return value.replace( `--${ key }=` , '' );
-}
-
-const basePath =
-  process.argv.length > 2 ? (process.argv[2].endsWith('/') ? process.argv[2] : process.argv[2] + '/') : 'contracts/';
-const scopeFile = process.argv.length > 3 && process.argv[3].endsWith('txt') ? process.argv[3] : null;
-const githubLink = process.argv.length > 4 && process.argv[4] ? process.argv[4] : null;
-const out = argv("out") ?? 'report.md';
-const scope = argv("scope");
-const sarif = argv("sarif");
-
-
-// ============================== GENERATE REPORT ==============================
-
-main(basePath, scopeFile, githubLink, out, scope, 'sarif.sarif');
+program
+  .argument('[string]', 'Path were the contracts lies')
+  .option('-s, --scope <string>', '.txt file containing the contest scope')
+  .option('-g, --github <string>', 'github url to generate links to code')
+  .option('-o, --out <string>', 'where to save the report')
+  .action((basePath:string, options) => {
+    basePath = basePath ||'contracts/';
+    basePath = basePath.endsWith('/') ? basePath : `${basePath}/`;
+    console.log(`basePath: ${basePath}`);
+    console.log(`scope: ${options.scope||'----'}`);
+    console.log(`github: ${options.github||'----'}`);
+    console.log(`out: ${options.out||'report.md'}`);
+    console.log('*****************************')
+    // ============================== GENERATE REPORT ==============================
+    main(basePath, options.scope, options.gihub, options.out || 'report.md');
+  }).parse();
