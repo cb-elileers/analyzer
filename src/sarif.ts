@@ -144,9 +144,9 @@ const sarif = (analyses: Analysis[]): Object => {
                 }
               }
             ],
-            partialFingerprints: {
-              primaryLocationLineHash: `${sanitizeFileNames(instance.fileName)}:${instance.line}` // Sanitize file name to remove leading "."
-            },
+            // partialFingerprints: {
+            //   primaryLocationLineHash: `${sanitizeFileNames(instance.fileName)}:${instance.line}` // Sanitize file name to remove leading "."
+            // },
             level: mapSeverity(item.issue.type), // Map issue type to SARIF severity level
           }))
         )
