@@ -268,8 +268,8 @@ echo "################ START DEBUGGING INFORMATION ################"
 echo "Contracts' PWD is '$CONTRACTSPWD'"
 echo "Project Type is '$PROJECTSCOPE'. ('src' = Foundry | 'contracts' = Hardhat)"
 echo "Project URL is '$PROJECTURL'"
-echo "Contents of our scope.txt file:"
-cat /tmp/scope.txt
+# echo "Contents of our scope.txt file:"
+# cat /tmp/scope.txt
 echo "################ END DEBUGGING INFORMATION ################"
 
 
