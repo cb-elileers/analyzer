@@ -21,7 +21,7 @@ jobs:
           submodules: recursive
 
       - name: Run 4naly3er Action
-        uses: ./.github/actions/analyzer
+        uses: ./.github/actions/analyzer-action
         id: analyzer
 
       - name: Upload SARIF file
