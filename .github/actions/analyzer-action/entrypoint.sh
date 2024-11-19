@@ -126,6 +126,7 @@ install_foundry() {
 }
 
 install_4naly3er() {
+    PREINSTALLPATH=$(pwd)
     # Download the forked repo and CD in
     cd /tmp/
     git clone https://github.com/cb-elileers/analyzer
@@ -135,7 +136,7 @@ install_4naly3er() {
     # Save 4naly3er path in TOOLPWD
     TOOLPWD=$(pwd)
     # Return to the previous directory
-    cd .. 
+    cd $PREINSTALLPATH
 }
 
 install_deps() {
