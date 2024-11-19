@@ -20,6 +20,11 @@ jobs:
         with:
           submodules: recursive
 
+      - name: ls
+        shell: bash
+        run: |
+            ls -al
+
       - name: Run 4naly3er Action
         uses: ./.github/actions/analyzer-action
         id: analyzer
