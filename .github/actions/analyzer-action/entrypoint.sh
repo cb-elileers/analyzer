@@ -226,9 +226,12 @@ install_deps
 
 ################## Prepare inputs to the tool ##################
 ################## Generate remapping document #################
-if [[ ! -f remappings.txt ]]; then    # If we don't have a remappings
-    forge remappings > remappings.txt # file, then we generate one.
+if [[ -f foundry.toml ]]; then
+    if [[ ! -f remappings.txt ]]; then    # If we don't have a remappings
+        forge remappings > remappings.txt # file, then we generate one.
+    fi
 fi
+
 
 
 ################## Save PWD of project (arg 1) ##################
@@ -236,7 +239,6 @@ CONTRACTSPWD="$(pwd)/"
 
 
 ################## Determine Foundry/Hardhat and scoped folder (arg 2, part 1) ##################
-if [[ -f foundry.toml ]]; then
     PROJECTSCOPE="src" # Foundry 'src' folder will be the scoped folder
 elif [[ -f hardhat.config.ts ]]; then
     PROJECTSCOPE="contracts" # Hardhat 'contracts' folder will be the scoped folder
