@@ -30,10 +30,13 @@ const markdown = (results: AnalysisResults, fileNames?: string[], githubLink?: s
 }
 
 const files = (fileNames: string[]): string => {
-  let result = '## Files analyzed\n\n';
-  fileNames.forEach(fileName => {
-    result += ` - ${fileName}\n`;
-  });
+  let result = ''
+  if (fileNames.length > 0){
+    result = '## Files analyzed\n\n';
+    fileNames.forEach(fileName => {
+      result += ` - ${fileName}\n`;
+    });
+  }
   return result;
 }
 
