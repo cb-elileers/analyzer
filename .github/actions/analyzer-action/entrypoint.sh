@@ -276,7 +276,8 @@ echo "################ END DEBUGGING INFORMATION ################"
 ################## Run the tool ################## 
 # trap "output_stdout" EXIT # Set a trap to call the output_stdout function when the script exits
 cd $TOOLPWD             # Move to 4naly3er folder (required to run it)
-yarn analyze $CONTRACTSPWD -g $PROJECTURL --sarif report.sarif # Finally, run the tool
+yarn analyze $CONTRACTSPWD -g $PROJECTURL --sarif analyzer.sarif # Finally, run the tool
 echo "4naly3er analysis completed." # Results in report.md and report.sarif
-cp report.md report.sarif /tmp/ # Copy results to /tmp/ for SARIF ingestion
+du -ac .
+cp report.md analyzer.sarif /tmp/ # Copy results to /tmp/ for SARIF ingestion
 exit 0 # Exit success
