@@ -20,11 +20,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: du
-        shell: bash
-        run: |
-            du -ac .
-
       - name: Run 4naly3er Action
         uses: ./.github/actions/analyzer-action
         id: analyzer

@@ -278,6 +278,5 @@ echo "################ END DEBUGGING INFORMATION ################"
 cd $TOOLPWD             # Move to 4naly3er folder (required to run it)
 yarn analyze $CONTRACTSPWD -g $PROJECTURL --sarif analyzer.sarif # Finally, run the tool
 echo "4naly3er analysis completed." # Results in report.md and report.sarif
-du -ac .
 cp report.md analyzer.sarif /tmp/ # Copy results to /tmp/ for SARIF ingestion
 exit 0 # Exit success
