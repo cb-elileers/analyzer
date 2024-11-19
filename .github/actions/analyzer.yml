@@ -1,0 +1,62 @@
+name: "4naly3er-action"
+description: "Runs 4naly3er, a Solidity static analyzer. Supports Foundry and Hardhat projects."
+inputs:
+  solc-version:
+    description: "Optional. The version of solc to use. Should be autodetected, but may be specified manually."
+  node-version:
+    description: "Optional. The version of node to use."
+    default: 20
+  target:
+    description: "Optional. The path of the project that 4naly3er should analyze, relative to the repo root."
+    default: .
+    type: string
+  foundry-version:
+    description: "Optional. Commit hash for foundry to install"
+    default: 'dbc48ea'
+    type: string
+outputs:
+  sarif:
+    description: "If produced, the path of the SARIF file, relative to the repo root."
+  stdout:
+    description: "Standard output from 4naly3er. Works well when passing `--checklist` in slither-args."
+  # markdown:
+  #   description: "Markdown-style report from 4naly3er"   #Not sure if this works but we should consider saving the artifact.
+runs:
+  using: composite
+
+  steps:
+    # - name: Setup python
+    #   uses: infra/cb-action-setup-python@master
+
+    # - name: Install solc-select
+    #   shell: bash
+    #   run: |
+    #     pip3 install solc-select
+
+    # - name: Setup Node / Yarn
+    #   uses: infra/cb-action-setup-node@master
+    #   with:
+    #     version: ${{ inputs.node-version }}
+
+    # - name: Setup foundry 
+    #   uses: infra/cb-action-setup-external-tool@master
+    #   with:  
+    #     tool_name: 'foundry'    
+    #     version: '${{ inputs.foundry-version }}'
+
+    - name: Run 4naly3er Entrypoint Script
+      shell: bash
+      run: |
+        ./.github/actions/4naly3er-action/entrypoint.sh
+      env:
+        TARGET: ${{ inputs.target }}
+        SOLCVER: ${{ inputs.solc_version }}
+        NODEVER: ${{ inputs.node-version }}
+        SARIFOUT: ${{ inputs.sarif }}
+        STDOUTFILE: "/tmp/slither-stdout"
+        IGNORECOMPILE: ${{ inputs.ignore-compile }}
+        FAIL_ON_LEVEL: ${{ inputs.fail-on }}
+
+branding:
+  icon: "shield"
+  color: "red"

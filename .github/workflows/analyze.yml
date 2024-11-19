@@ -1,0 +1,38 @@
+name: 4naly3er Analysis
+# Config File for CBHQ Github Repos
+on:
+  # Only run this action on pushes / pull requests to main branch
+  push:
+    branches: [main, testing, analyzer-action]
+  pull_request:
+    branches: [main, testing, analyzer-action]
+
+jobs:
+  analyze:
+    runs-on:
+      - ubuntu-latest
+      # - default-config
+      # - small
+      # - amd64
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Run 4naly3er Action
+        uses: ./.github/actions/analyzer
+        id: analyzer
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: /tmp/report.sarif.json
+            
+
+# Set GH_TOKEN permissions to be as restricted as possible 
+# security-events must be set to write for the SARIF upload step
+permissions:
+  security-events: write
+  contents: read
+  actions: read
