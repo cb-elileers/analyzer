@@ -128,7 +128,7 @@ install_foundry() {
 install_4naly3er() {
     # Download the forked repo and CD in
     git clone https://github.com/cb-elileers/analyzer
-    cd 4naly3er
+    cd analyzer
     # Install deps using Yarn
     yarn
     # Save 4naly3er path in TOOLPWD
