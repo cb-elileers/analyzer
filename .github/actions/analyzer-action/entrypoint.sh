@@ -239,6 +239,7 @@ CONTRACTSPWD="$(pwd)/"
 
 
 ################## Determine Foundry/Hardhat and scoped folder (arg 2, part 1) ##################
+if [[ -f foundry.toml ]]; then
     PROJECTSCOPE="src" # Foundry 'src' folder will be the scoped folder
 elif [[ -f hardhat.config.ts ]]; then
     PROJECTSCOPE="contracts" # Hardhat 'contracts' folder will be the scoped folder
