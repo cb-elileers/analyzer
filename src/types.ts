@@ -61,3 +61,25 @@ export type AnalysisResults = {
   M?: Analysis[];
   H?: Analysis[];
 }
+
+export type SARIFResult = {
+  ruleId: string;
+  message: {
+    text: string;
+  };
+  locations: Location[];
+  level: string;
+};
+
+export type Location = {
+  physicalLocation: {
+    artifactLocation: {
+      uri: string;
+    };
+    region: {
+      startLine: number;
+      startColumn: number;
+      endLine?: number;
+    };
+  };
+};
