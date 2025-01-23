@@ -1,4 +1,4 @@
-import { Analysis } from './types';
+import { Analysis, SARIFResult, Instance, Location } from './types';
 
 
 // Titles for different issue types
@@ -86,6 +86,77 @@ const mapTag = (type: string) => {
   }
 };
 
+const generateResults = (analyses: Analysis[]) => {
+  const results = analyses.flatMap((item, index) => {
+    if(item.issue.regexOrAST === 'Regex') { 
+      // Regex Results need to be deduplicated for matching files
+
+      let RegexResults: SARIFResult[] = [];
+
+      const FileIssueMap: { [key: string]: Instance[] } = {}; // Map of file names to instances
+      item.instances.forEach(issue => { // Populate the map
+        if (!FileIssueMap[issue.fileName]) {
+          FileIssueMap[issue.fileName] = [];
+        }
+        FileIssueMap[issue.fileName].push(issue);
+      });
+      
+      Object.keys(FileIssueMap).forEach(key => { // For each file, create a SARIFResult
+        let locations: Location[] = [];
+        FileIssueMap[key].forEach(issue => {
+          locations.push({
+            physicalLocation: {
+              artifactLocation: {
+                uri: sanitizeFileNames(issue.fileName), // Sanitize the file name to remove leading "."
+              },
+              region: {
+                startLine: issue.line,
+                startColumn: 1,
+                ...(issue.endLine && { endLine: issue.endLine }) // Add endLine if it exists
+              }
+            }
+          });
+        });
+        let fileResult: SARIFResult = {
+          ruleId: `rule${index + 1}`,
+          message: {
+            text: item.issue.title
+          },
+          locations: locations
+        };
+        RegexResults.push(fileResult);
+      });
+
+      return RegexResults;
+      
+    } else if (item.issue.regexOrAST === 'AST') { // AST Results use default locations
+      return item.instances.map(instance => ({
+        ruleId: `rule${index + 1}`,
+        message: {
+          text: item.issue.title
+        },
+        locations: [
+          {
+            physicalLocation: {
+              artifactLocation: {
+                uri: sanitizeFileNames(instance.fileName), // Sanitize the file name to remove leading "."
+              },
+              region: {
+                startLine: instance.line,
+                startColumn: 1,
+                ...(instance.endLine && { endLine: instance.endLine }) // Add endLine if it exists
+              }
+            }
+          }
+        ]
+      }));
+    }
+  }
+  );
+
+  return results;
+}
+
 const sarif = (analyses: Analysis[]): Object => {
   // Convert the JSON data to SARIF format
   console.log(analyses.length);
@@ -125,41 +196,12 @@ const sarif = (analyses: Analysis[]): Object => {
         automationDetails: {
           id: "4naly3er"
         },
-        results: analyses.flatMap((item, index) =>
-          item.instances.map(instance => ({
-            ruleId: `rule${index + 1}`,
-            message: {
-              text: item.issue.title
-            },
-            locations: [
-              {
-                physicalLocation: {
-                  artifactLocation: {
-                    uri: sanitizeFileNames(instance.fileName), // Sanitize the file name to remove leading "."
-                  },
-                  region: {
-                    startLine: instance.line,
-                    startColumn: 1
-                  }
-                }
-              }
-            ],
-            partialFingerprints: {
-              primaryLocationLineHash: `${sanitizeFileNames(instance.fileName)}:${instance.line}` // Sanitize file name to remove leading "."
-            },
-            level: mapSeverity(item.issue.type), // Map issue type to SARIF severity level
-          }))
-        )
+        results: generateResults(analyses)
       }
     ]
   };
 
   return sarifDetails;
-
-
-  // we should return this instead of writing to fs here
-  // // Write the SARIF data to a file called report.sarif.json
-  // fs.writeFileSync('report.sarif.json', JSON.stringify(sarif, null, 2), 'utf-8');
 }
 
 export default sarif;
