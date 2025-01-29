@@ -4,7 +4,7 @@ import sarif from './sarif';
 import compileAndBuildAST from './compile';
 import issues from './issues';
 import markdown from './markdown';
-import { InputType, IssueTypes, Analysis, AnalysisResults, ReportTypes } from './types';
+import { InputType, IssueTypes, Analysis, AnalysisResults, ReportTypes, Issue } from './types';
 import { recursiveExploration } from './utils';
 
 /*   .---. ,--.  ,--  / ,---.   ,--.   ,--.'  ,-. .----. ,------.,------, 
@@ -30,9 +30,11 @@ const main = async (
   scopeFile: string | null,
   githubLink: string | null,
   out: string,
+  severityToRun: IssueTypes[],
+  skipDetectors: string[],
   scope?: string,
   sarifOut?: string,
-  listFiles?: boolean
+  listFiles?: boolean,
 ) => {
   let fileNames: string[] = [];
 
@@ -65,11 +67,10 @@ const main = async (
 
   let analysisResultsObj: AnalysisResults = {};
 
-  // todo: parameterize which issue types to run
-  for (const t of Object.values(IssueTypes)) {
+  for (const t of severityToRun) {
     let analyses: Analysis[] = analyze(
       files,
-      issues.filter(i => i.type === t),
+      issues.filter(i => i.type === t && !skipDetectors.includes(i.id.toLowerCase())),
       !!githubLink ? githubLink : undefined,
     );
 
