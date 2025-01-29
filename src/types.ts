@@ -27,6 +27,7 @@ export type Issue = RegexIssue | ASTIssue;
 
 // Type to follow to add an issue detected by a regex
 export type RegexIssue = {
+  id: string;
   type: IssueTypes;
   title: string;
   regex: RegExp;
@@ -40,6 +41,7 @@ export type RegexIssue = {
 
 // Type to follow to add an issue detected by AST analysis
 export type ASTIssue = {
+  id: string;
   type: IssueTypes;
   title: string;
   impact?: string;

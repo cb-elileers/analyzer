@@ -25,6 +25,7 @@ program
   .option('--skip-low', 'Skip low issues')
   .option('--skip-medium', 'Skip medium issues')
   .option('--skip-high', 'Skip high issues')
+  .option('--skip, --skip-detectors [detectorID...]', 'Skip specific detectors by id')
   .action((basePath:string, options) => {
     basePath = basePath ||'contracts/';
     basePath = basePath.endsWith('/') ? basePath : `${basePath}/`;
@@ -38,16 +39,19 @@ program
     if(!options.skipMedium) severityToRun.push(IssueTypes.M);
     if(!options.skipHigh) severityToRun.push(IssueTypes.H);
 
+    const skipDetectors = options.skip || [];
+    const skipDetectorsLower = skipDetectors.map(detector => detector.toLowerCase()); // Convert to lowercase to avoid case-sensitive issues
+
     console.log(`basePath: ${basePath}`);
     console.log(`scope: ${options.scope||'----'}`);
     console.log(`github: ${options.github||'----'}`);
     console.log(`out: ${options.out||'report.md'}`);
     console.log(`legacyScope: ${options.legacyscope||'----'}`);
     console.log(`sarif: ${options.sarif||'----'}`);
-    console.log(`severityMinimum: ${options.severityMinimum||'0'}`);
     console.log('Severity to run: ', severityToRun);
+    console.log('Skipping detectors: ', skipDetectorsLower);
 
     console.log('*****************************')
     // ============================== RUN ANALYZER ==============================
-    main(basePath, options.scope, options.github, options.out || 'report.md', severityToRun, options.legacyscope, options.sarif, options.listfiles);
+    main(basePath, options.scope, options.github, options.out || 'report.md', severityToRun, skipDetectorsLower, options.legacyscope, options.sarif, options.listfiles);
   }).parse();

@@ -31,6 +31,7 @@ const main = async (
   githubLink: string | null,
   out: string,
   severityToRun: IssueTypes[],
+  skipDetectors: string[],
   scope?: string,
   sarifOut?: string,
   listFiles?: boolean,
@@ -69,7 +70,7 @@ const main = async (
   for (const t of severityToRun) {
     let analyses: Analysis[] = analyze(
       files,
-      issues.filter(i => i.type === t),
+      issues.filter(i => i.type === t && !skipDetectors.includes(i.id.toLowerCase())),
       !!githubLink ? githubLink : undefined,
     );
 
