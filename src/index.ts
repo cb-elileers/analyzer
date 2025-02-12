@@ -25,7 +25,7 @@ program
   .option('--skip-low', 'Skip low issues')
   .option('--skip-medium', 'Skip medium issues')
   .option('--skip-high', 'Skip high issues')
-  .option('--skip, --skip-detectors [detectorID...]', 'Skip specific detectors by id')
+  .option('--skip, --skip-detectors <detectorID...>', 'Skip specific detectors by id')
   .action((basePath:string, options) => {
     basePath = basePath ||'contracts/';
     basePath = basePath.endsWith('/') ? basePath : `${basePath}/`;
@@ -39,7 +39,7 @@ program
     if(!options.skipMedium) severityToRun.push(IssueTypes.M);
     if(!options.skipHigh) severityToRun.push(IssueTypes.H);
 
-    const skipDetectors = options.skip || [];
+    const skipDetectors = options.skipDetectors || [];
     const skipDetectorsLower = skipDetectors.map(detector => detector.toLowerCase()); // Convert to lowercase to avoid case-sensitive issues
 
     console.log(`basePath: ${basePath}`);
