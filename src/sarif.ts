@@ -172,7 +172,7 @@ const sarif = (analyses: Analysis[]): Object => {
           driver: {
             name: "4naly3er",
             fullName: "4naly3er Static Smart Contract Code Analyzer",
-            informationUri: "https://github.com/cb-elileers/analyze",
+            informationUri: "https://github.com/cb-elileers/analyzer",
             version: "0.2", // Update the version number        
             rules: analyses.map((item, index) => ({
               id: `rule${index + 1}`,
@@ -183,7 +183,7 @@ const sarif = (analyses: Analysis[]): Object => {
               fullDescription: {
                 text: item.issue.description || item.issue.title
               },              
-              helpUri: "https://github.com/cb-elileers/analyze/blob/analytic/detectors.md",
+              helpUri: "https://github.com/cb-elileers/analyzer/blob/analytic/detectors.md",
               help: {
                 text: item.issue.description || item.issue.title
               },
