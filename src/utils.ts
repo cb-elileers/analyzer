@@ -45,7 +45,7 @@ export async function sh(cmd: string) {
  * @notice Returns all file contained in a folder
  * @dev Works with a queue, could be done with a recursive function
  */
-export const recursiveExploration = (basePath: string, extension = '.sol'): string[] => {
+export const recursiveExploration = (basePath: string, extension = '.sol', skipDirs: string[] = ['test', 'lib', 'script', 'node_modules', '.git']): string[] => {
   let fileNames: string[] = [];
   let directoryQueue = [''];
   while (directoryQueue.length > 0) {
@@ -54,7 +54,7 @@ export const recursiveExploration = (basePath: string, extension = '.sol'): stri
     for (let fileName of tempFileNames) {
       fileName = `${dir}${fileName}`;
       if (fs.statSync(`${basePath}${fileName}`).isDirectory()) {
-        if (fileName != "test" && fileName != "lib" && fileName != "script"){ // skip test and lib folders
+        if (!skipDirs.includes(fileName)) { // skip directories from skipDirs array
           directoryQueue.push(fileName + '/');
         } 
       } else if (fileName.endsWith(extension)) {
